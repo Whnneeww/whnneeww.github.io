@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>オシロスコープ</title>
-    <style>
-        /* CSSスタイルを設定することができます */
-    </style>
+  <title>Frequency Sound Example</title>
 </head>
 <body>
-    <canvas id="oscilloscope"></canvas>
-    <script src="script.js"></script>
+  <h1>Frequency Sound Example</h1>
+  
+  <label for="frequency">Frequency (Hz):</label>
+  <input type="number" id="frequency" min="20" max="20000" step="5" value="440">
+  <button onclick="playSound()">Play</button>
+  
+  <script>
+    function playSound() {
+      var frequency = document.getElementById("frequency").value;
+      var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      var oscillator = audioContext.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency;
+      oscillator.connect(audioContext.destination);
+      oscillator.start();
+      setTimeout(function() {
+        oscillator.stop();
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
