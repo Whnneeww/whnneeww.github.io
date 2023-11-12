@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microphone Recording</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="graph"></div>
+
+    <script>
+        // グラフの初期化
+        var graphDiv = document.getElementById('graph');
+        var trace = {
+            x: [],
+            y: [],
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Waveform'
+        };
+        var layout = {
+            title: 'Microphone Recording',
+            xaxis: { title: 'Time (seconds)' },
+            yaxis: { title: 'Amplitude' }
+        };
+        var data = [trace];
+        Plotly.newPlot(graphDiv, data, layout);
+
+        // 音声入力の開始
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                var audioContext = new AudioContext();
+                var source = audioContext.createMediaStreamSource(stream);
+                var processor = audioContext.createScriptProcessor(1024, 1, 1);
+
+                source.connect(processor);
+                processor.connect(audioContext.destination);
+
+                // 音声データの処理
+                processor.onaudioprocess = function(e) {
+                    var input = e.inputBuffer.getChannelData(0);
+                    var time = audioContext.currentTime;
+
+                    // グラフにデータを追加
+                    trace.x.push(time);
+                    trace.y.push(input[0]);
+
+                    // グラフを更新
+                    Plotly.redraw(graphDiv);
+                };
+            })
+            .catch(function(err) {
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
