@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript実行サイト</title>
+</head>
+<body>
+
+  <textarea id="code" rows="10" cols="50"></textarea>
+  <br>
+  <button onclick="executeCode()">実行</button>
+  <br>
+  <pre id="output"></pre>
+
+  <script>
+    function executeCode() {
+      var code = document.getElementById("code").value;
+      var output = document.getElementById("output");
+      
+      try {
+        output.textContent = eval(code);
+      } catch (error) {
+        output.textContent = "エラー: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
