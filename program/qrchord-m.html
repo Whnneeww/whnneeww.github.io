@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QRコード作成</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
+</head>
+<body>
+  <h1>QRコード作成</h1>
+  <input type="text" id="text-input" placeholder="QRコードに変換するテキストを入力">
+  <button onclick="generateQRCode()">QRコードを作成</button>
+  <br><br>
+  <div id="qrcode"></div>
+
+  <script>
+    function generateQRCode() {
+      var text = document.getElementById("text-input").value;
+      var qrcodeElement = document.getElementById("qrcode");
+
+      // QRコードを作成
+      var qrcode = new QRCode(qrcodeElement, {
+        text: text,
+        width: 128,
+        height: 128
+      });
+    }
+  </script>
+</body>
+</html>
