@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Oscilloscope</title>
+    <style>
+        canvas {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="oscilloscope" width="800" height="600"></canvas>
+    <script>
+        var canvas = document.getElementById("oscilloscope");
+        var ctx = canvas.getContext("2d");
+        var buffer = new Array(1000).fill(0);
+        var currentPos = 0;
+
+        function drawGraph() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "green";
+            ctx.lineWidth = 1;
+
+            var prevX = 0;
+            var prevY = canvas.height / 2 + buffer[buffer.length - 1] * canvas.height / 4;
+            for (var i = 1; i < buffer.length; i++) {
+                var x = canvas.width * i / buffer.length;
+                var y = canvas.height / 2 + buffer[(currentPos + i) % buffer.length] * canvas.height / 4;
+                ctx.beginPath();
+                ctx.moveTo(prevX, prevY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                prevX = x;
+                prevY = y;
+            }
+        }
+
+        function updateBuffer() {
+            buffer[currentPos] = Math.sin(2 * Math.PI * 10 * currentPos / buffer.length);
+            currentPos = (currentPos + 1) % buffer.length;
+        }
+
+        setInterval(function() {
+            updateBuffer();
+            drawGraph();
+        }, 10);
+    </script>
+</body>
+</html>
