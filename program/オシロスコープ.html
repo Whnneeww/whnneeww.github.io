@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Oscilloscope</title>
+    <title>Oscilloscope with microphone input</title>
     <style>
         canvas {
             border: 1px solid black;
@@ -18,30 +18,43 @@
             var width = canvas.width;
             var height = canvas.height;
 
-            var x = 0;
-            var y = height / 2;
-            var amplitude = 100;
-            var frequency = 0.01;
-            var phase = 0;
-            var speed = 2;
+            // マイクからの入力を取得する
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    var audioContext = new AudioContext();
+                    var source = audioContext.createMediaStreamSource(stream);
+                    var analyser = audioContext.createAnalyser();
+                    source.connect(analyser);
 
-            setInterval(function() {
-                context.clearRect(0, 0, width, height);
-                context.beginPath();
-                context.moveTo(0, y);
+                    analyser.fftSize = 2048;
+                    var bufferLength = analyser.frequencyBinCount;
+                    var dataArray = new Uint8Array(bufferLength);
 
-                for (var i = 0; i < width; i++) {
-                    x = i;
-                    y = height / 2 + amplitude * Math.sin(frequency * x + phase);
-                    context.lineTo(x, y);
-                }
+                    function draw() {
+                        requestAnimationFrame(draw);
 
-                context.strokeStyle = "black";
-                context.lineWidth = 2;
-                context.stroke();
+                        analyser.getByteTimeDomainData(dataArray);
 
-                phase += speed;
-            }, 10);
+                        context.clearRect(0, 0, width, height);
+                        context.beginPath();
+                        context.moveTo(0, height / 2);
+
+                        for (var i = 0; i < width; i++) {
+                            var x = i;
+                            var y = (dataArray[i] / 128) * height / 2 + height / 2;
+                            context.lineTo(x, y);
+                        }
+
+                        context.strokeStyle = "black";
+                        context.lineWidth = 2;
+                        context.stroke();
+                    }
+
+                    draw();
+                })
+                .catch(function(error) {
+                    console.log("Error accessing microphone:", error);
+                });
         }
     </script>
 </body>
