@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>発振プログラム</title>
+    <style>
+        .slider {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="startOscillation()">発振を開始</button>
+    <button onclick="stopOscillation()">発振を停止</button>
+    <br>
+    <label for="waveform">波形:</label>
+    <select id="waveform" onchange="changeWaveform()">
+        <option value="sine">正弦波</option>
+        <option value="square">矩形波</option>
+        <option value="sawtooth">のこぎり波</option>
+        <option value="triangle">三角波</option>
+    </select>
+    <br>
+    <label for="frequency">周波数:</label>
+    <input type="range" id="frequency" min="20" max="20000" step="1" onchange="changeFrequency()" class="slider">
+    <span id="frequencyValue">440</span> Hz
+
+    <script>
+        var oscillator = null;
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function startOscillation() {
+            oscillator = audioContext.createOscillator();
+            oscillator.type = document.getElementById("waveform").value;
+            oscillator.frequency.value = document.getElementById("frequency").value;
+
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+        }
+
+        function stopOscillation() {
+            oscillator.stop();
+            oscillator.disconnect();
+        }
+
+        function changeWaveform() {
+            oscillator.type = document.getElementById("waveform").value;
+        }
+
+        function changeFrequency() {
+            var frequencyValue = document.getElementById("frequency").value;
+            document.getElementById("frequencyValue").textContent = frequencyValue;
+            oscillator.frequency.value = frequencyValue;
+        }
+    </script>
+</body>
+</html>
