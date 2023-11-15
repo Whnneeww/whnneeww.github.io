@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>マイクからの音の高さを取得</title>
+</head>
+<body>
+  <button id="startButton">マイクからの音の高さを取得</button>
+  <script>
+    // オーディオコンテキストを作成
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // マイクからの入力を取得する関数
+    function getPitchFromMic() {
+      return new Promise((resolve, reject) => {
+        // マイクからの入力を取得するメディアデバイスを取得
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            // マイクからの入力をソースに設定
+            const source = audioContext.createMediaStreamSource(stream);
+
+            // オーディオノードを接続
+            const analyser = audioContext.createAnalyser();
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            // フーリエ変換を行うための配列を作成
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Float32Array(bufferLength);
+
+            // データを取得
+            analyser.getFloatTimeDomainData(dataArray);
+
+            // ピッチを計算する関数
+            function calculatePitch() {
+              // ピッチ計算のための変数を初期化
+              let maxVal = -Infinity;
+              let maxIndex = -1;
+
+              // データ配列をループして最大値を探す
+              for (let i = 0; i < bufferLength; i++) {
+                const val = Math.abs(dataArray[i]);
+                if (val > maxVal) {
+                  maxVal = val;
+                  maxIndex = i;
+                }
+              }
+
+              // 最大値のインデックスから周波数を計算
+              const frequency = audioContext.sampleRate * maxIndex / bufferLength;
+
+              // 周波数を返す
+              return frequency;
+            }
+
+            // ピッチを計算して返す
+            resolve(calculatePitch());
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    }
+
+    // ボタンがクリックされた時の処理
+    const startButton = document.getElementById("startButton");
+    startButton.addEventListener("click", function() {
+      // マイクからの入力を取得する関数を呼び出し、音の高さを取得
+      getPitchFromMic()
+        .then(pitch => {
+          // 取得した音の高さを表示
+          console.log("音の高さ: " + pitch);
+        })
+        .catch(error => {
+          console.error("エラー: " + error);
+        });
+    });
+  </script>
+ <p>OK?</p>
+</body>
+</html>
