@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Oscilloscope</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="oscilloscope" width="800" height="400"></canvas>
+
+    <script>
+        window.onload = function() {
+            var canvas = document.getElementById("oscilloscope");
+            var context = canvas.getContext("2d");
+            var width = canvas.width;
+            var height = canvas.height;
+
+            var x = 0;
+            var y = height / 2;
+            var amplitude = 100;
+            var frequency = 0.01;
+            var phase = 0;
+            var speed = 2;
+
+            setInterval(function() {
+                context.clearRect(0, 0, width, height);
+                context.beginPath();
+                context.moveTo(0, y);
+
+                for (var i = 0; i < width; i++) {
+                    x = i;
+                    y = height / 2 + amplitude * Math.sin(frequency * x + phase);
+                    context.lineTo(x, y);
+                }
+
+                context.strokeStyle = "black";
+                context.lineWidth = 2;
+                context.stroke();
+
+                phase += speed;
+            }, 10);
+        }
+    </script>
+</body>
+</html>
