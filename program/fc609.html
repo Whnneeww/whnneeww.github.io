@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ファイルの拡張子変換</title>
+    <script>
+        function convertExtension() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            
+            var newExtension = document.getElementById('newExtension').value;
+            var fileName = file.name;
+            
+            var dotIndex = fileName.lastIndexOf('.');
+            var baseName = fileName.substring(0, dotIndex);
+            
+            var newFileName = baseName + '.' + newExtension;
+            
+            var downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(file);
+            downloadLink.download = newFileName;
+            downloadLink.click();
+        }
+    </script>
+</head>
+<body>
+    <h1>ファイルの拡張子変換</h1>
+    <input type="file" id="fileInput">
+    <input type="text" id="newExtension" placeholder="新しい拡張子">
+    <button onclick="convertExtension()">変換</button>
+</body>
+</html>
