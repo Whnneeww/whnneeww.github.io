@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>音声ファイルの解析</title>
+  <style>
+    #dropzone {
+      width: 300px;
+      height: 200px;
+      border: 2px dashed gray;
+      border-radius: 5px;
+      text-align: center;
+      padding: 40px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="dropzone">
+    <p>音声ファイルをここにドロップしてください</p>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById('dropzone');
+
+    // ドロップ領域のドラッグオーバーイベントを設定
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.style.backgroundColor = 'lightgray';
+    });
+
+    // ドロップ領域のドラッグリーブイベントを設定
+    dropzone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dropzone.style.backgroundColor = 'white';
+    });
+
+    // ドロップ領域のドロップイベントを設定
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.backgroundColor = 'white';
+
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const audioData = event.target.result;
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioBuffer;
+
+        audioContext.decodeAudioData(audioData, (buffer) => {
+          audioBuffer = buffer;
+          analyzeAudio();
+        });
+
+        function analyzeAudio() {
+          const audioSource = audioContext.createBufferSource();
+          audioSource.buffer = audioBuffer;
+
+          const offlineContext = new OfflineAudioContext(
+            1, // モノラル
+            audioBuffer.length,
+            audioBuffer.sampleRate
+          );
+
+          const source = offlineContext.createBufferSource();
+          source.buffer = audioBuffer;
+
+          const analyser = offlineContext.createAnalyser();
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.8;
+
+          source.connect(analyser);
+          analyser.connect(offlineContext.destination);
+
+          source.start();
+
+          offlineContext.startRendering()
+            .then((renderedBuffer) => {
+              const frequencyData = new Float32Array(analyser.frequencyBinCount);
+              analyser.getFloatFrequencyData(frequencyData);
+
+              const maxIndex = frequencyData.indexOf(Math.max(...frequencyData));
+              const frequency = audioContext.sampleRate * maxIndex / analyser.fftSize;
+
+              console.log('音の高さ:', frequency, 'Hz');
+            })
+            .catch((error) => {
+              console.log('解析エラー:', error);
+            });
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+  </script>
+</body>
+</html>
