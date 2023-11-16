@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>発振プログラム</title>
+</head>
+<body>
+    <button onclick="startOscillation()">発振を開始</button>
+    <button onclick="stopOscillation()">発振を停止</button>
+    <br>
+    <label for="waveform">波形:</label>
+    <select id="waveform" onchange="changeWaveform()">
+        <option value="sine">正弦波</option>
+        <option value="square">矩形波</option>
+        <option value="sawtooth">のこぎり波</option>
+        <option value="triangle">三角波</option>
+    </select>
+    <br>
+    <label for="frequency">周波数:</label>
+    <input type="number" id="frequency" min="20" max="20000" step="1" onchange="changeFrequency()">
+    <button onclick="randomFrequency()">ランダム</button>
+
+    <script>
+        var oscillator = null;
+        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function startOscillation() {
+            oscillator = audioContext.createOscillator();
+            oscillator.type = document.getElementById("waveform").value;
+            oscillator.frequency.value = document.getElementById("frequency").value;
+
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+        }
+
+        function stopOscillation() {
+            oscillator.stop();
+            oscillator.disconnect();
+        }
+
+        function changeWaveform() {
+            oscillator.type = document.getElementById("waveform").value;
+        }
+
+        function changeFrequency() {
+            oscillator.frequency.value = document.getElementById("frequency").value;
+        }
+
+        function randomFrequency() {
+            var min = 20; // 最小周波数
+            var max = 20000; // 最大周波数
+
+            var randomFreq = Math.floor(Math.random() * (max - min + 1)) + min;
+            document.getElementById("frequency").value = randomFreq;
+            oscillator.frequency.value = randomFreq;
+        }
+    </script>
+</body>
+</html>
