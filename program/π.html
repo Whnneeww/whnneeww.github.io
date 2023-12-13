@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pi Calculation</title>
+    <script>
+      function calculatePi() {
+        var pi = 0;
+        var sign = 1;
+        var denominator = 1;
+        var result = "";
+      
+        for (var i = 0; i < 1000000; i++) {
+          pi += sign * (4 / denominator);
+          sign *= -1;
+          denominator += 2;
+          
+          if (i % 1000 === 0) {
+            result += pi.toFixed(1000) + "<br>"; // 1000回ごとに結果を追加
+          }
+        }
+        
+        document.getElementById("result").innerHTML = result;
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Pi Calculation</h1>
+    <button onclick="calculatePi()">Calculate Pi</button>
+    <div id="result"></div>
+  </body>
+</html>
