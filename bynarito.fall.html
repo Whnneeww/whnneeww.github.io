@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>テキストデータをバイナリーデータに変換してダウンロードする例</title>
+</head>
+<body>
+  <button onclick="convertAndDownload()">ダウンロード</button>
+
+  <script>
+    function convertAndDownload() {
+      const textData = "これはテキストデータです。";
+      const binaryData = textToBinary(textData);
+
+      const blob = new Blob([binaryData], { type: 'application/octet-stream' });
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ファイル.bin';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function textToBinary(text) {
+      const length = text.length;
+      const buffer = new ArrayBuffer(length);
+      const view = new Uint8Array(buffer);
+
+      for (let i = 0; i < length; i++) {
+        view[i] = text.charCodeAt(i);
+      }
+
+      return buffer;
+    }
+  </script>
+</body>
+</html>
