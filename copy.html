@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URLパラメータから取得した文字列をコピーする例</title>
+</head>
+<body>
+  <button onclick="copyText()">テキストをコピー</button>
+
+  <script>
+    function copyText() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const text = urlParams.get('text');
+
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      alert('テキストがコピーされました: ' + text);
+    }
+  </script>
+</body>
+</html>
