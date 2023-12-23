@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ボタンクリックの例</title>
+</head>
+<body>
+<input type="file" id="fileInput" />
+<button onclick="convertAndDownload()">変換してダウンロード</button>
+  <script>
+function convertAndDownload() {
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    const binaryData = event.target.result;
+    const textData = binaryToText(binaryData);
+
+    const blob = new Blob([textData], { type: 'text/plain' });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name.replace(/\.[^/.]+$/, ".txt");
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+function binaryToText(binaryData) {
+  const bytes = new Uint8Array(binaryData);
+  let text = '';
+
+  for (let i = 0; i < bytes.length; i++) {
+    text += String.fromCharCode(bytes[i]);
+  }
+
+  return text;
+}
+  </script>
+</body>
+</html>
