@@ -23,7 +23,7 @@ function convertAndDownload() {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = file.name.replace(/\.[^/.]+$/, ".txt");
+    a.download = file.name.replace(/\.[^/.]+$/, ".deta");
     a.click();
 
     URL.revokeObjectURL(url);
