@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>マイクから音声を録音してダウンロード</title>
+</head>
+<body>
+  <button onclick="startRecording()">録音開始</button>
+  <button onclick="stopRecording()">録音停止</button>
+  <button onclick="downloadRecording()">録音をダウンロード</button>
+
+  <script>
+    let mediaRecorder;
+    let chunks = [];
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+          chunks = [];
+        })
+        .catch(function(err) {
+          console.log('マイクの使用許可がありません: ' + err);
+        });
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    function downloadRecording() {
+      if (chunks.length > 0) {
+        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'recording.wav';
+        a.click();
+      }
+    }
+
+    if (navigator.mediaDevices.getUserMedia) {
+      console.log('マイクの使用が許可されています');
+    } else {
+      console.log('マイクの使用が許可されていません');
+    }
+
+    if (typeof MediaRecorder === 'undefined') {
+      console.log('MediaRecorderはサポートされていません');
+    } else {
+      console.log('MediaRecorderはサポートされています');
+    }
+  </script>
+</body>
+</html>
