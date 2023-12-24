@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>マイクから音程を表示</title>
+</head>
+<body>
+  <button onclick="startRecording()">録音開始</button>
+  <button onclick="stopRecording()">録音停止</button>
+  <h2 id="pitch"></h2>
+
+  <script>
+    let audioContext;
+    let analyser;
+    let stream;
+    let pitchElement;
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 2048;
+          stream = audioContext.createMediaStreamSource(stream);
+          stream.connect(analyser);
+          getPitch();
+        })
+        .catch(function(err) {
+          console.log('マイクの使用許可がありません: ' + err);
+        });
+    }
+
+    function stopRecording() {
+      if (audioContext) {
+        audioContext.close();
+      }
+    }
+
+    function getPitch() {
+      const bufferLength = analyser.fftSize;
+      const dataArray = new Float32Array(bufferLength);
+      analyser.getFloatTimeDomainData(dataArray);
+
+      const pitch = getPitchFromWaveform(dataArray);
+      if (pitch) {
+        pitchElement.textContent = '音程: ' + pitch.toFixed(2);
+      }
+
+      requestAnimationFrame(getPitch);
+    }
+
+    function getPitchFromWaveform(waveform) {
+      const bufferLength = waveform.length;
+      const pitchBuffer = new Float32Array(bufferLength);
+      analyser.getFloatTimeDomainData(pitchBuffer);
+
+      const ac = autoCorrelate(pitchBuffer, audioContext.sampleRate);
+      if (ac === -1) {
+        return null;
+      }
+
+      const pitch = audioContext.sampleRate / ac;
+      return pitch;
+    }
+
+    function autoCorrelate(buffer, sampleRate) {
+      const size = buffer.length;
+      const maxSamples = Math.floor(size / 2);
+      const bestOffset = -1;
+      const bestCorrelation = 0;
+      const rms = getRMS(buffer);
+
+      if (rms < 0.01) {
+        return -1;
+      }
+
+      for (let offset = 0; offset < maxSamples; offset++) {
+        let correlation = 0;
+
+        for (let i = 0; i < maxSamples; i++) {
+          correlation += Math.abs((buffer[i]) - (buffer[i + offset]));
+        }
+
+        correlation = 1 - (correlation / maxSamples);
+        if (correlation > bestCorrelation) {
+          bestCorrelation = correlation;
+          bestOffset = offset;
+        }
+      }
+
+      const fundamentalFreq = sampleRate / bestOffset;
+      return fundamentalFreq;
+    }
+
+    function getRMS(buffer) {
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        sum += buffer[i] * buffer[i];
+      }
+      const rms = Math.sqrt(sum / buffer.length);
+      return rms;
+    }
+  </script>
+</body>
+</html>
