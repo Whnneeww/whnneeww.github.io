@@ -1,1 +1,5 @@
-127.0.0.1
+$ dig Whnneeww.ndns.xyz +noall +answer -t A
+> Whnneeww.ndns.xyz    3600    IN A     127.0.0.1
+> Whnneeww.ndns.xyz    3600    IN A     127.0.0.1
+> Whnneeww.ndns.xyz    3600    IN A     127.0.0.1
+> Whnneeww.ndns.xyz    3600    IN A     127.0.0.1
