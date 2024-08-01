@@ -9,12 +9,10 @@ async function fetchSitemap() {
         const gallery = document.getElementById('gallery');
         for (let url of urls) {
             const loc = url.getElementsByTagName('loc')[0].textContent;
-            const title = url.getElementsByTagName('title')[0]?.textContent || "タイトルなし"; // タイトルを直接取得
             const image = url.getElementsByTagName('image:loc')[0]?.textContent || 'nositeimg.png';
             const titleElements = url.getElementsByTagName('title');
-            if (titleElements.length > 0) {
-                title = titleElements[0].textContent;
-            }
+            const titleElement = url.querySelector("title"); 
+            const title = titleElement ? titleElement.textContent : "タイトルなし";
             const card = document.createElement('div');
             card.className = 'card';
 
