@@ -11,7 +11,6 @@ async function fetchSitemap() {
             const loc = url.getElementsByTagName('loc')[0].textContent;
             const title = url.getElementsByTagName('title')[0]?.textContent || "タイトルなし"; // タイトルを直接取得
             const image = url.getElementsByTagName('image:loc')[0]?.textContent || 'nositeimg.png';
-            let title = "タイトルなし"; // デフォルトのタイトル
             const titleElements = url.getElementsByTagName('title');
             if (titleElements.length > 0) {
                 title = titleElements[0].textContent;
