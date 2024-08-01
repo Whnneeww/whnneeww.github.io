@@ -1,0 +1,38 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <title>クヌースの矢印表記計算</title> 
+</head> 
+<body> 
+  <h1>クヌースの矢印表記計算</h1> 
+  <label for="expression">式を入力:</label> 
+  <input type="text" id="expression" value="3↑3↑3"> 
+  <button onclick="calculate()">計算</button> 
+  <p id="result"> 
+ 
+  <script> 
+    function calculate() { 
+      const expression = document.getElementById('expression').value; 
+      const result = evaluateKnuthArrow(expression); 
+      document.getElementById('result').textContent = `結果は: ${result}`; 
+    } 
+ 
+    function evaluateKnuthArrow(expression) { 
+      const [base, ...rest] = expression.split('↑').map(Number); 
+      if (rest.length === 0) { 
+        return base; // 最後の矢印の場合、基数をそのまま返す 
+      } else { 
+        return power(base, evaluateKnuthArrow(rest.join('↑'))); // 再帰的に計算 
+      } 
+    } 
+ 
+    function power(base, exponent) { 
+      let result = 1; 
+      for (let i = 0; i < exponent; i++) { 
+        result *= base; 
+      } 
+      return result; 
+    } 
+  </script> 
+</body> 
+</html> 
