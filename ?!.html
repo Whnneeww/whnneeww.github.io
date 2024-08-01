@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>URLからZIPダウンロード</title>
+  <script>
+  function downloadZip(url) {
+    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+      .then(response = & gt; response.json())
+      .then(data = & gt; {
+        const fileContent = atob(data.contents);
+        const
+          blob = new Blob([fileContent], {
+            type: 'text/plain'
+          });
+        const url = URL.createObjectURL(blob);
+        const zipFile = new JSZip();
+        zipFile.file(url.split('/').pop(), blob);
+        zipFile.generateAsync({
+          type: 'blob'
+        }).then(content = & gt; {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = 'downloaded.zip';
+          link.click();
+        });
+      }).catch(error = & gt; {
+        console.error('Error downloading file:', error);
+      });
+  }
+  </script>
+</head>
+
+<body>
+  <form id="zipForm">
+    <input type="text" id="urlInput" placeholder="URLを入力">
+    <button type="button" onclick="downloadZip(document.getElementById('urlInput').value)">ダウンロード</button>
+  </form>
+</body>
+
+</html>
+<html>
+
+<head>
+  <title>URLからZIPダウンロード</title>
+  <script>
+  function downloadZip(url) {
+    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+      .then(response = & gt; response.json())
+      .then(data = & gt; {
+        const fileContent = atob(data.contents);
+        const
+          blob = new Blob([fileContent], {
+            type: 'text/plain'
+          });
+        const url = URL.createObjectURL(blob);
+        const zipFile = new JSZip();
+        zipFile.file(url.split('/').pop(), blob);
+        zipFile.generateAsync({
+          type: 'blob'
+        }).then(content = & gt; {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = 'downloaded.zip';
+          link.click();
+        });
+      }).catch(error = & gt; {
+        console.error('Error downloading file:', error);
+      });
+  }
+  </script>
+</head>
+
+<body>
+  <form id="zipForm">
+    <input type="text" id="urlInput" placeholder="URLを入力">
+    <button type="button" onclick="downloadZip(document.getElementById('urlInput').value)">ダウンロード</button>
+  </form>
+</body>
+
+</html>
