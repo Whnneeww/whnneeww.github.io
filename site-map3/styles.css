@@ -27,15 +27,12 @@ body.dark {
 }
 
 .card {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s;
+    position: relative;
 }
 
-.card.dark {
-    background: #444;
+.card-link {
+    text-decoration: none;
+    color: inherit; /* カード内のテキスト色を維持 */
 }
 
 .card img {
