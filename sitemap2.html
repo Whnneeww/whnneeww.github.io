@@ -77,6 +77,10 @@
                 const img = document.createElement("img"); 
                 img.src = image; 
                 galleryItem.appendChild(img); 
+              } else { 
+                const img = document.createElement("img"); 
+                img.src = "nositeimg.png"; // サイトのイメージがない場合は nositeimg.png を指定 
+                galleryItem.appendChild(img); 
               } 
  
               const link = document.createElement("a"); 
