@@ -9,15 +9,18 @@ async function fetchSitemap() {
         const gallery = document.getElementById('gallery');
         for (let url of urls) {
             const loc = url.getElementsByTagName('loc')[0].textContent;
-            const title = url.getElementsByTagName('title')[0]?.textContent || "タイトルなし";
+            const title = url.getElementsByTagName('title')[0]?.textContent || "タイトルなし"; // タイトルを直接取得
             const image = url.getElementsByTagName('image:loc')[0]?.textContent || 'nositeimg.png';
 
             const card = document.createElement('div');
             card.className = 'card';
 
+            // リンク付きカードを作成
             card.innerHTML = `
-                <img src="${image}" onerror="this.onerror=null; this.src='nositeimg.png';" alt="${title}">
-                <h2>${title}</h2>
+                <a href="${loc}" target="_blank" class="card-link">
+                    <img src="${image}" onerror="this.onerror=null; this.src='nositeimg.png';" alt="${title}">
+                    <h2>${title}</h2>
+                </a>
             `;
 
             gallery.appendChild(card);
@@ -26,29 +29,6 @@ async function fetchSitemap() {
         console.error('Error fetching the sitemap:', error);
     }
 }
-
-function toggleTheme() {
-    const body = document.body;
-    body.classList.toggle('dark');
-    body.classList.toggle('light');
-
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        card.classList.toggle('dark');
-    });
-}
-
-function setInitialTheme() {
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-    if (prefersDarkScheme.matches) {
-        document.body.classList.add('dark');
-    } else {
-        document.body.classList.add('light');
-    }
-}
-
-document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
 
 // 初期設定をシステム設定に基づいて行う
 setInitialTheme();
