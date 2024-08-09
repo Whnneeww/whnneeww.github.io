@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>囁く影</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 4em;
+            margin-top: 20%;
+            color: #ff0000;
+            text-shadow: 0 0 30px #ff4500;
+        }
+        p {
+            font-size: 1.5em;
+            opacity: 0.8;
+            animation: fade 3s infinite;
+        }
+        @keyframes fade {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .shadow {
+            position: absolute;
+            width: 150px;
+            animation: shadowMove 4s infinite;
+        }
+        @keyframes shadowMove {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -20px); }
+            100% { transform: translate(0, 0); }
+        }
+        .blood-drip {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            width: 50px;
+            animation: drip 1s infinite;
+        }
+        @keyframes drip {
+            0% { top: -50px; }
+            100% { top: 80%; }
+        }
+    </style>
+</head>
+<body>
+    <h1>囁く影</h1>
+    <p>何があなたを待ち受けているのか…</p>
+    
+    <audio id="horror-sound" src="https://huuze.f5.si/horror-sound.mp3" loop></audio>
+    <script>
+        const audio = document.getElementById('horror-sound');
+        audio.volume = 0.3;
+        audio.play();
+
+        document.body.addEventListener('click', function() {
+            const whisperMessage = ["振り向かないで...", "逃げることはできないよ...", "彼女はすぐそこにいる...", "この場所を離れちゃいけない..."];
+            const randomMessage = whisperMessage[Math.floor(Math.random() * whisperMessage.length)];
+            alert(randomMessage);
+        });
+
+        // 不気味な影が画面に現れる
+        setInterval(() => {
+            const shadow = document.createElement('img');
+            shadow.src = "https://huuze.f5.si/cindex-65611/IMG_7327.jpeg"; // 影の画像に置き換えて
+            shadow.classList.add('shadow');
+            shadow.style.left = Math.random() * window.innerWidth + 'px';
+            shadow.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(shadow);
+            setTimeout(() => shadow.remove(), 3000);
+        }, 2000);
+
+        // 血の滴を落とす
+        const bloodDrop = document.createElement('img');
+        bloodDrop.classList.add('blood-drip');
+        bloodDrop.src = "https://path-to-your-blood-image.png"; // 血の画像に置き換えて
+        document.body.appendChild(bloodDrop);
+    </script>
+</body>
+</html>
